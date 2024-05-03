@@ -298,6 +298,10 @@ namespace gnsstk
                right.m_timeSystem != TimeSystem::Any) &&
                m_timeSystem != right.m_timeSystem )
       {
+         auto rightCopy = right;
+         if (rightCopy.changeTimeSystem(m_timeSystem))
+            return operator-(rightCopy);
+
          InvalidRequest ir("CommonTime objects not in same time system, cannot be differenced");
          GNSSTK_THROW( ir );
       }
@@ -401,6 +405,10 @@ namespace gnsstk
            right.m_timeSystem != TimeSystem::Any) &&
           m_timeSystem != right.m_timeSystem)
       {
+         auto rightCopy = right;
+         if (rightCopy.changeTimeSystem(m_timeSystem))
+            return operator<(rightCopy);
+
          InvalidRequest ir(
             "CommonTime objects not in same time system, cannot be compared: " +
             gnsstk::StringUtils::asString(m_timeSystem) + " != " +
