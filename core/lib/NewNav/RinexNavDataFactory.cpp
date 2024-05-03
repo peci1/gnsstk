@@ -237,7 +237,7 @@ namespace gnsstk
             }
             if (check)
             {
-               if (processEph)
+               if (processEph && (eph != nullptr))
                {
                   if (eph->validate() == expect)
                   {
@@ -267,7 +267,7 @@ namespace gnsstk
             }
             else
             {
-               if (processEph)
+               if (processEph && (eph != nullptr))
                {
                   if (!cb.process(eph))
                      return false;
@@ -585,6 +585,10 @@ namespace gnsstk
                //glo->step is algorithm configuration
             glo->fixFit();
             break;
+         case SatelliteSystem::Geosync:
+         case SatelliteSystem::IRNSS:
+            // These GNSSes are not supported but are expected, so do not fail
+            break;
          default:
                /// @todo add other GNSSes
             rv = false;
@@ -692,6 +696,10 @@ namespace gnsstk
                // GLOFNavHealth
             glo->healthBits = navIn.health << 2;
             healthOut.push_back(health);
+            break;
+         case SatelliteSystem::Geosync:
+         case SatelliteSystem::IRNSS:
+            // These GNSSes are not supported but are expected, so do not fail
             break;
          default:
                /// @todo add other GNSSes
