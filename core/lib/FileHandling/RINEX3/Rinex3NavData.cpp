@@ -219,8 +219,12 @@ namespace gnsstk
          // get 3 data records
          for(int i=1; i<=3; i++) getRecord(i, strm);
 
-         // SBAS and GLO only have 3 records
-         if (satSys == "S" || satSys == "R") return;
+         // SBAS and GLO in RINEX <3.05 only have 3 records
+         if (satSys == "S" || (satSys == "R" && strm.header.version < (3.05 - 1e-6))) return;
+
+         // GLO in RINEX 3.05+ has 4 records
+         if (satSys == "R")
+            getRecord(4, strm);
 
          // GPS GAL QZSS BDS have 7 records, get 4-7
          if (satSys == "G" || satSys == "E" || satSys == "J" || satSys == "C" ||
@@ -963,10 +967,13 @@ namespace gnsstk
 
          else if (nline == 4)
          {
-            i0       = line.substr(n,19); n+=19;
-            Crc      = line.substr(n,19); n+=19;
-            w        = line.substr(n,19); n+=19;
-            OMEGAdot = line.substr(n,19);
+            if (satSys != "R")  // GLO in RINEX 3.05+ has 4 lines but we can't parse the 4th
+            {
+               i0       = line.substr(n,19); n+=19;
+               Crc      = line.substr(n,19); n+=19;
+               w        = line.substr(n,19); n+=19;
+               OMEGAdot = line.substr(n,19);
+            }
          }
 
          else if (nline == 5)
